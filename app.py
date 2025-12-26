@@ -4,8 +4,7 @@ from datetime import datetime
 
 # --- 1. SETUP & DATA LOADING ---
 # Removed emoji icon, replaced with standard text
-st.set_page_config(page_title="Airline Strike Predictor")
-
+st.set_page_config(page_title="Smoot: Smooth Travel Checker", page_icon="✈️")
 @st.cache_data
 def load_data():
     try:
@@ -71,8 +70,16 @@ def get_airline_risk(code, travel_date, db):
 
 # --- 3. THE VISUAL INTERFACE (What users see) ---
 
-st.title("Flight Disruption Check")
-st.markdown("Check if labor strikes might jeopardize your upcoming trip.")
+# --- 3. THE VISUAL INTERFACE (What users see) ---
+col1, col2 = st.columns([1, 4]) # Create a small column for logo, big for text
+
+with col1:
+    # Display the logo image you uploaded
+    st.image("logo.png", width=100)
+
+with col2:
+    st.title("Smoot")
+    st.markdown("Getting stranded stinks, use Smoot.")
 
 # --- INPUT SECTION ---
 col1, col2 = st.columns(2)
