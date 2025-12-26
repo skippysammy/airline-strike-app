@@ -1,0 +1,162 @@
+{
+  "AC": {
+    "name": "Air Canada",
+    "country": "Canada",
+    "unions": {
+      "pilots": {
+        "status": "Active",
+        "expiration_date": "2027-09-29",
+        "note": "New 4-year contract ratified October 2024."
+      },
+      "flight_attendants": {
+        "status": "Binding Arbitration",
+        "expiration_date": "2029-03-31",
+        "note": "Strike occurred Aug 2025. Wage offer rejected Sep 2025, but binding arbitration now imposed. No further strike possible."
+      }
+    }
+  },
+  "WS": {
+    "name": "WestJet",
+    "country": "Canada",
+    "unions": {
+      "pilots": {
+        "status": "Active",
+        "expiration_date": "2028-12-31",
+        "note": "Encore and Mainline pilots ratified new deals in 2024."
+      },
+      "flight_attendants": {
+        "status": "Negotiating",
+        "expiration_date": "2025-12-31",
+        "note": "Contract expired Dec 31, 2025. Negotiations are active. Risk of labor action in mid-to-late 2026."
+      }
+    }
+  },
+  "TS": {
+    "name": "Air Transat",
+    "country": "Canada",
+    "unions": {
+      "pilots": {
+        "status": "Active",
+        "expiration_date": "2029-01-01",
+        "note": "Tentative agreement reached Dec 2025 preventing strike."
+      },
+      "flight_attendants": {
+        "status": "Active",
+        "expiration_date": "2027-11-30",
+        "note": "Agreement ratified in early 2024."
+      }
+    }
+  },
+  "UA": {
+    "name": "United Airlines",
+    "country": "USA",
+    "unions": {
+      "pilots": {
+        "status": "Active",
+        "expiration_date": "2027-09-30",
+        "note": "Ratified massive contract in late 2023."
+      },
+      "flight_attendants": {
+        "status": "Negotiating",
+        "expiration_date": "2021-08-28",
+        "note": "Currently in federal mediation. Deal rejected July 2025. High risk of future conflict."
+      }
+    }
+  },
+  "DL": {
+    "name": "Delta Air Lines",
+    "country": "USA",
+    "unions": {
+      "pilots": {
+        "status": "Active",
+        "expiration_date": "2026-12-31",
+        "note": "Ratified March 2023."
+      },
+      "flight_attendants": {
+        "status": "Non-Union",
+        "expiration_date": "2099-12-31",
+        "note": "Delta flight attendants are not unionized. Strike risk is near zero."
+      }
+    }
+  },
+  "AA": {
+    "name": "American Airlines",
+    "country": "USA",
+    "unions": {
+      "pilots": {
+        "status": "Active",
+        "expiration_date": "2027-08-01",
+        "note": "Contract amendable Aug 2027."
+      },
+      "flight_attendants": {
+        "status": "Active",
+        "expiration_date": "2029-01-01",
+        "note": "New contract ratified 2025."
+      }
+    }
+  },
+  "WN": {
+    "name": "Southwest Airlines",
+    "country": "USA",
+    "unions": {
+      "pilots": {
+        "status": "Active",
+        "expiration_date": "2028-12-31",
+        "note": "Ratified Jan 2024."
+      },
+      "flight_attendants": {
+        "status": "Active",
+        "expiration_date": "2028-04-30",
+        "note": "Ratified April 2024."
+      }
+    }
+  },
+  "AS": {
+    "name": "Alaska Airlines",
+    "country": "USA",
+    "unions": {
+      "pilots": {
+        "status": "Active",
+        "expiration_date": "2027-09-01",
+        "note": "Extension ratified Sep 2024."
+      },
+      "flight_attendants": {
+        "status": "Active",
+        "expiration_date": "2028-02-28",
+        "note": "Ratified Feb 2025."
+      }
+    }
+  },
+  "B6": {
+    "name": "JetBlue",
+    "country": "USA",
+    "unions": {
+      "pilots": {
+        "status": "Negotiating",
+        "expiration_date": "2024-05-01",
+        "note": "Pilots opened negotiations for successor deal in 2024. Currently operating under extension."
+      },
+      "flight_attendants": {
+        "status": "Active",
+        "expiration_date": "2026-12-13",
+        "note": "Contract amendable Dec 2026."
+      }
+    }
+  },
+  "NK": {
+    "name": "Spirit Airlines",
+    "country": "USA",
+    "unions": {
+      "pilots": {
+        "status": "Active",
+        "expiration_date": "2027-12-31",
+        "note": "Agreed to pay cuts/restructuring Dec 2025 due to bankruptcy process."
+      },
+      "flight_attendants": {
+        "status": "Active",
+        "expiration_date": "2027-12-31",
+        "note": "Agreed to pay cuts/restructuring Dec 2025 due to bankruptcy process."
+      }
+    }
+  }
+}
