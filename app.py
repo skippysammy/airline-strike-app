@@ -11,8 +11,7 @@ def load_data()
         with open('airlines_db.json', 'r') as f
             return json.load(f)
     except FileNotFoundError
-        st.error(⚠️ Database file not found. Please ensure 'airlines_db.json' is in the folder.)
-        return {}
+st.error("⚠️ Database file not found. Please ensure 'airlines_db.json' is in the folder.")        return {}
 
 # Load the database
 db = load_data()
@@ -120,3 +119,4 @@ if st.button(Analyze Risk)
         else
 
             st.success(✅ GOOD TO GO No active labor disputes found for your dates.)
+
