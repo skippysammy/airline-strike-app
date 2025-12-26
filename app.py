@@ -78,7 +78,6 @@ with col1:
     st.image("logo.png", width=100)
 
 with col2:
-    st.title("Smoot")
     st.markdown("Don't get stranded, use Smoot.")
 
 # --- INPUT SECTION ---
