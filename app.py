@@ -79,7 +79,7 @@ with col1:
 
 with col2:
     st.title("Smoot")
-    st.markdown("Getting stranded stinks, use Smoot.")
+    st.markdown("Don't get stranded, use Smoot.")
 
 # --- INPUT SECTION ---
 col1, col2 = st.columns(2)
