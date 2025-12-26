@@ -3,8 +3,7 @@ import json
 from datetime import datetime
 
 # --- 1. SETUP & DATA LOADING ---
-st.set_page_config(page_title=Airline Strike Predictor, page_icon=✈️)
-
+st.set_page_config(page_title="Airline Strike Predictor", page_icon="✈️")
 # We cache this function so it doesn't reload the file every time you click a button
 @st.cache_data
 def load_data()
@@ -119,4 +118,5 @@ if st.button(Analyze Risk)
         elif trip_status == YELLOW
             st.warning(⚠️ CAUTION Labor disputes are active. Disruption is unlikely but possible. Monitor news.)
         else
+
             st.success(✅ GOOD TO GO No active labor disputes found for your dates.)
