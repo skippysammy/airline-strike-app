@@ -73,13 +73,15 @@ def get_airline_risk(code, travel_date, db):
 # --- 3. THE VISUAL INTERFACE (What users see) ---
 col1, col2 = st.columns([1, 4]) # Create a small column for logo, big for text
 
+# Add vertical_alignment="center"
+col1, col2 = st.columns([1, 5], vertical_alignment="center") 
+
 with col1:
-    # Display the logo image you uploaded
     st.image("logo.png", width=100)
 
 with col2:
-    st.markdown("Don't get stranded, use Smoot.")
-
+    # I also added '###' to make the text a bit larger and bolder (like a slogan)
+    st.markdown("### Don't get stranded, use Smoot.")
 # --- INPUT SECTION ---
 col1, col2 = st.columns(2)
 
