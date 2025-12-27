@@ -1,31 +1,46 @@
 import streamlit as st
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
-# --- 1. SETUP & DATA LOADING ---
-# Removed emoji icon, replaced with standard text
+# --- 1. SETUP & CONFIGURATION ---
 st.set_page_config(page_title="Smoot: Smooth Travel Checker", page_icon="✈️")
+
+# --- 2. DATA LOADING ---
 @st.cache_data
 def load_data():
     try:
         with open('airlines_db.json', 'r') as f:
             return json.load(f)
     except FileNotFoundError:
-        # Added quotes around the error message
-        st.error("Database file not found. Please ensure 'airlines_db.json' is in the folder.")
+        st.error("⚠️ Database file not found.")
         return {}
 
-# Load the database
+# Load the airline database
 db = load_data()
-
-# Create a helper dictionary to swap names for codes
 airline_map = {data['name']: code for code, data in db.items()}
 
-# --- 2. THE RISK LOGIC (Hidden Engine) ---
-def get_airline_risk(code, travel_date, db):
+# Define Airport Data 
+airport_db = {
+    "YYZ (Toronto Pearson)": ["AC", "WS", "TS", "UA", "DL", "AA"],
+    "YVR (Vancouver)": ["AC", "WS", "UA", "DL", "AA", "AS"],
+    "YUL (Montreal)": ["AC", "TS", "UA", "DL", "AA"],
+    "ATL (Atlanta)": ["DL", "WN", "NK", "UA", "AA"],
+    "ORD (Chicago O'Hare)": ["UA", "AA", "DL", "WN", "AC", "WS"],
+    "DFW (Dallas/Fort Worth)": ["AA", "UA", "DL", "NK", "AC"],
+    "DEN (Denver)": ["UA", "WN", "DL", "AA", "AC"],
+    "LAX (Los Angeles)": ["UA", "AA", "DL", "AS", "WN", "B6", "NK", "AC", "WS"],
+    "JFK (New York JFK)": ["DL", "B6", "AA", "AS"],
+    "SEA (Seattle)": ["AS", "DL", "UA", "WN", "AC"]
+}
+
+# --- 3. THE LOGIC (RISK CALCULATOR) ---
+def get_airline_risk(code, start_date, end_date, db):
     """
-    Returns a dictionary with color and message for a SINGLE airline.
+    Checks risk for Departure (Cancellation) AND Return (Stranded).
     """
+    if code not in db:
+        return "GREY", [f"No data for airline code: {code}"]
+
     airline_data = db.get(code)
     risk_color = "GREEN"
     reasons = []
@@ -34,96 +49,133 @@ def get_airline_risk(code, travel_date, db):
     for group, details in airline_data['unions'].items():
         status = details['status']
         
-        # Check if expiration date exists and is valid
+        # Parse Expiration Date
         if details['expiration_date'] == "N/A":
-             expiry_date = datetime(2099, 12, 31).date() # Far future
+             expiry_date = datetime(2099, 12, 31).date()
         else:
              expiry_date = datetime.strptime(details['expiration_date'], "%Y-%m-%d").date()
 
-        # LOGIC: Check for Danger
+        # SAFE SCENARIOS
         if status in ["Non-Union", "Binding Arbitration"]:
-            continue # Safe
+            continue 
 
-        # Red Flags
+        # CRITICAL RISKS (Strike Votes, Impasse)
         if any(x in status for x in ["Strike", "Impasse", "Cooling-off"]):
             risk_color = "RED"
-            # Replaced Red Circle Emoji with [CRITICAL]
             reasons.append(f"[CRITICAL] {group.title()}: {status}")
 
-        # Yellow Flags (Expires soon or Negotiating)
+        # DATE-BASED RISKS
         elif risk_color != "RED":
-            days_until_travel = (expiry_date - travel_date).days
             
-            if days_until_travel < 30:
+            # Scenario A: Contract expires BEFORE you even leave
+            if expiry_date < start_date:
                 risk_color = "YELLOW"
-                # Replaced Yellow Circle Emoji with [WARNING]
-                reasons.append(f"[WARNING] {group.title()}: Contract expires near your trip ({details['expiration_date']})")
-            elif status == "Negotiating":
+                reasons.append(f"[WARNING] {group.title()}: Contract expires BEFORE your trip ({details['expiration_date']}). Risk of cancellation.")
+
+            # Scenario B: Contract expires WHILE you are away
+            elif start_date <= expiry_date <= end_date:
                 risk_color = "YELLOW"
-                reasons.append(f"[WARNING] {group.title()}: Currently negotiating.")
+                reasons.append(f"[WARNING] {group.title()}: Contract expires DURING your trip ({details['expiration_date']}). Risk of getting stranded.")
+            
+            # Scenario C: Contract expires shortly AFTER you return (Buffer zone)
+            elif 0 < (expiry_date - end_date).days < 30:
+                risk_color = "YELLOW"
+                reasons.append(f"[CAUTION] {group.title()}: Contract expires shortly after your return ({details['expiration_date']}).")
+
+            # Scenario D: Active Negotiations (Always a mild risk)
+            if status == "Negotiating" and risk_color == "GREEN":
+                risk_color = "YELLOW"
+                reasons.append(f"[WARNING] {group.title()}: Active negotiations (No date set).")
 
     if risk_color == "GREEN":
-        # Replaced Checkmark Emoji with [OK]
-        reasons.append(f"[OK] All contracts active.")
+        reasons.append(f"[OK] Contracts active through your travel dates.")
 
     return risk_color, reasons
 
-# --- 3. THE VISUAL INTERFACE (What users see) ---
+# --- 4. THE UI (AIRBNB STYLE) ---
 
-# --- 3. THE VISUAL INTERFACE (What users see) ---
-col1, col2 = st.columns([1, 4]) # Create a small column for logo, big for text
-
-# Add vertical_alignment="center"
-col1, col2 = st.columns([1, 5], vertical_alignment="center") 
-
+# Header Section
+col1, col2 = st.columns([1, 5], vertical_alignment="center")
 with col1:
-    st.image("logo.png", width=100)
-
+    try:
+        st.image("logo.png", width=80)
+    except:
+        st.write("✈️") 
 with col2:
-    # I also added '###' to make the text a bit larger and bolder (like a slogan)
     st.markdown("### Don't get stranded, use Smoot.")
-# --- INPUT SECTION ---
-col1, col2 = st.columns(2)
 
-with col1:
-    travel_date = st.date_input("When is your trip?", min_value=datetime.today())
+st.markdown("---") 
 
-with col2:
-    selected_names = st.multiselect(
-        "Select Airline(s)", 
-        options=list(airline_map.keys()),
-        default=None
+# Search Section
+with st.container():
+    st.write("**1. When are you travelling?**")
+    today = datetime.today()
+    date_range = st.date_input(
+        "Select Departure and Return dates",
+        value=(today, today + timedelta(days=7)),
+        min_value=today,
+        format="YYYY/MM/DD"
     )
 
-# --- RESULTS SECTION ---
-if st.button("Analyze Risk"):
-    if not selected_names:
-        st.warning("Please select at least one airline.")
-    else:
-        st.divider()
-        
-        trip_status = "GREEN"
-        
-        for name in selected_names:
-            code = airline_map[name]
-            color, messages = get_airline_risk(code, travel_date, db)
-            
-            # Display a card for this airline
-            with st.expander(f"{name} (Status: {color})", expanded=True):
-                if color == "RED":
-                    trip_status = "RED"
-                    st.error(f"**High Risk**\n\n" + "\n\n".join(messages))
-                elif color == "YELLOW":
-                    if trip_status != "RED": trip_status = "YELLOW"
-                    st.warning(f"**Medium Risk**\n\n" + "\n\n".join(messages))
-                else:
-                    st.success(f"**Low Risk**\n\n" + "\n\n".join(messages))
+    st.write("**2. How do you want to search?**")
+    tab_airline, tab_airport = st.tabs(["✈️ By Airline", "🏢 By Airport"])
 
-        # Final Summary
-        st.subheader("Verdict")
-        if trip_status == "RED":
-            st.error("JEOPARDY DETECTED: At least one of your flights has a high risk of strike action. Check refund policies.")
-        elif trip_status == "YELLOW":
-            st.warning("CAUTION: Labor disputes are active. Disruption is unlikely but possible. Monitor news.")
-        else:
-            st.success("GOOD TO GO: No active labor disputes found for your dates.")
+    with tab_airline:
+        selected_airlines = st.multiselect(
+            "Select Airline(s)",
+            options=list(airline_map.keys())
+        )
+        search_trigger = st.button("Search by Airline", type="primary")
+
+    with tab_airport:
+        selected_airport = st.selectbox(
+            "Select Departure/Arrival Airport",
+            options=list(airport_db.keys())
+        )
+        search_airport_trigger = st.button("Search by Airport", type="primary")
+
+# --- 5. RESULTS SECTION ---
+st.markdown("---")
+
+# Helper to validate dates
+if isinstance(date_range, tuple) and len(date_range) == 2:
+    start_date, end_date = date_range
+else:
+    st.info("Please select both a Departure and Return date above.")
+    st.stop()
+
+# Run Search
+results = {} 
+
+if search_trigger and selected_airlines:
+    st.subheader(f"Results for your trip ({start_date} to {end_date})")
+    for name in selected_airlines:
+        code = airline_map[name]
+        results[name] = get_airline_risk(code, start_date, end_date, db)
+
+elif search_airport_trigger and selected_airport:
+    st.subheader(f"Risk Report for {selected_airport}")
+    st.info(f"Showing risks for all major airlines operating at {selected_airport}...")
+    airport_codes = airport_db[selected_airport]
+    for name, code in airline_map.items():
+        if code in airport_codes:
+            results[name] = get_airline_risk(code, start_date, end_date, db)
+
+# Display Sorted Results
+if results:
+    def sort_key(item):
+        color = item[1][0]
+        if color == "RED": return 0
+        if color == "YELLOW": return 1
+        return 2
+    
+    sorted_results = sorted(results.items(), key=sort_key)
+
+    for airline_name, (color, messages) in sorted_results:
+        with st.expander(f"{airline_name}  —  Status: {color}", expanded=(color != "GREEN")):
+            if color == "RED":
+                st.error("\n\n".join(messages))
+            elif color == "YELLOW":
+                st.warning("\n\n".join(messages))
+            else:
+                st.success("\n\n".join(messages))
