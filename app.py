@@ -173,7 +173,7 @@ with st.container():
 
     # Bucket 3: Airline (Dynamic)
     with c3:
-        st.markdown("**3. With which Airline?**")
+        st.markdown("**3. With which airline?**")
         # Get airlines available for the selected city
         available_codes = city_db[selected_city]
         
@@ -247,6 +247,7 @@ if search_clicked:
         else:
 
             st.write("No 'Green' alternatives found for this route. Check travel insurance policies.")
+
 
 
 
