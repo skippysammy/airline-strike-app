@@ -141,7 +141,7 @@ with st.container():
     
     # Bucket 1: Dates
     with c1:
-        st.markdown("**1. When**")
+        st.markdown("**1. When are you traveling**")
         today = datetime.today()
         date_range = st.date_input(
             "Trip Dates",
@@ -152,7 +152,7 @@ with st.container():
 
     # Bucket 2: City
     with c2:
-        st.markdown("**2. Where**")
+        st.markdown("**2. In which city**")
         selected_city = st.selectbox(
             "Destination",
             options=list(city_db.keys()),
@@ -162,7 +162,7 @@ with st.container():
 
     # Bucket 3: Airline (Dynamic)
     with c3:
-        st.markdown("**3. Who**")
+        st.markdown("**3.With which airline**")
         # Get airlines available for the selected city
         available_codes = city_db[selected_city]
         
