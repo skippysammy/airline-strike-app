@@ -98,7 +98,7 @@ def get_airline_risk(code, start_date, end_date, db):
 col1, col2 = st.columns([1, 5], vertical_alignment="center")
 with col1:
     try:
-        st.image("logo.png", width=80)
+        st.image("logo_image.png", width=80)
     except:
         st.write("✈️") 
 with col2:
