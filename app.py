@@ -138,7 +138,7 @@ col_logo, col_title = st.columns([1, 12], vertical_alignment="center")
 
 with col_logo:
     try:
-        st.image("logo_image.png", width=1200, height=1200) 
+        st.image("logo_image.png", height=120) 
     except:
         st.write("✈️") 
 with col_title:
@@ -152,7 +152,7 @@ with st.container():
     
     # Bucket 1: Dates
     with c1:
-        st.markdown("**1. When are you traveling?**")
+        st.markdown("**When are you traveling?**")
         today = datetime.today()
         date_range = st.date_input(
             "Trip Dates",
@@ -163,7 +163,7 @@ with st.container():
 
     # Bucket 2: City
     with c2:
-        st.markdown("**2. To which city?**")
+        st.markdown("**To which city?**")
         selected_city = st.selectbox(
             "Destination",
             options=sorted_cities,
@@ -173,7 +173,7 @@ with st.container():
 
     # Bucket 3: Airline (Dynamic)
     with c3:
-        st.markdown("**3. With which airline?**")
+        st.markdown("**With which airline?**")
         # Get airlines available for the selected city
         available_codes = city_db[selected_city]
         
@@ -247,6 +247,7 @@ if search_clicked:
         else:
 
             st.write("No 'Green' alternatives found for this route. Check travel insurance policies.")
+
 
 
 
