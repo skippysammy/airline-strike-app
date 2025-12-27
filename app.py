@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 # --- 1. CONFIGURATION & CSS STYLING ---
 st.set_page_config(page_title="Smoot", page_icon="✈️", layout="wide")
 
-# We target the internal classes of Streamlit widgets to round their borders.
+# Custom CSS to mimic Airbnb's "Rounded/Pill" look
 st.markdown("""
 <style>
     /* Round the Date Picker and Dropdowns */
@@ -26,6 +26,7 @@ st.markdown("""
         width: 100%;
         height: 50px;
         font-weight: bold;
+        font-size: 18px;
     }
     div.stButton > button:hover {
         background-color: #D90B3E;
@@ -33,7 +34,7 @@ st.markdown("""
     }
     /* Clean up top padding */
     .block-container {
-        padding-top: 2rem;
+        padding-top: 1rem;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -54,20 +55,31 @@ name_to_code = {data['name']: code for code, data in db.items()}
 # Map "AC" -> "Air Canada" (for displaying alternatives)
 code_to_name = {code: data['name'] for code, data in db.items()}
 
-# Simplified City/Hub Database
-# We map "City Name" to the list of airlines that fly there
+# EXPANDED City/Hub Database
+# Covers major hubs for AC, WS, TS, UA, DL, AA, WN, AS, B6, NK
 city_db = {
     "Toronto (YYZ)": ["AC", "WS", "TS", "UA", "DL", "AA"],
     "Vancouver (YVR)": ["AC", "WS", "UA", "DL", "AA", "AS"],
     "Montreal (YUL)": ["AC", "TS", "UA", "DL", "AA"],
     "New York (JFK)": ["DL", "B6", "AA", "AS"],
+    "New York (LGA)": ["DL", "AA", "UA", "WN", "AC", "WS"],
+    "Newark (EWR)": ["UA", "DL", "AA", "AC", "AS", "NK"],
     "Los Angeles (LAX)": ["UA", "AA", "DL", "AS", "WN", "B6", "NK", "AC", "WS"],
     "Chicago (ORD)": ["UA", "AA", "DL", "WN", "AC", "WS"],
     "Atlanta (ATL)": ["DL", "WN", "NK", "UA", "AA"],
     "Dallas (DFW)": ["AA", "UA", "DL", "NK", "AC"],
     "Denver (DEN)": ["UA", "WN", "DL", "AA", "AC"],
-    "Seattle (SEA)": ["AS", "DL", "UA", "WN", "AC"]
+    "Seattle (SEA)": ["AS", "DL", "UA", "WN", "AC"],
+    "San Francisco (SFO)": ["UA", "AS", "DL", "AA", "AC", "WS", "B6"],
+    "Miami (MIA)": ["AA", "DL", "UA", "AC", "WS", "NK"],
+    "Orlando (MCO)": ["WN", "NK", "DL", "UA", "AA", "AC", "WS", "B6"],
+    "Las Vegas (LAS)": ["WN", "NK", "UA", "DL", "AA", "AC", "WS", "AS", "B6"],
+    "Boston (BOS)": ["B6", "DL", "UA", "AA", "AC", "WS", "NK"],
+    "Fort Lauderdale (FLL)": ["NK", "B6", "WN", "DL", "UA", "AA", "AC", "WS"]
 }
+
+# Sort the cities alphabetically for the dropdown
+sorted_cities = sorted(city_db.keys())
 
 # --- 3. RISK ENGINE ---
 def get_airline_risk(code, start_date, end_date, db):
@@ -121,11 +133,11 @@ def get_airline_risk(code, start_date, end_date, db):
 
 # --- 4. LAYOUT & SEARCH BAR ---
 
-# Top Left Logo
-col_logo, col_title = st.columns([1, 10], vertical_alignment="center")
+# Top Left Logo - Adjusted ratio to bring text closer to logo
+col_logo, col_title = st.columns([0.6, 10], vertical_alignment="center")
+
 with col_logo:
     try:
-        # ENSURE THIS MATCHES YOUR FILENAME EXACTLY
         st.image("logo_image.png", width=60) 
     except:
         st.write("✈️") 
@@ -141,28 +153,28 @@ with st.container():
     
     # Bucket 1: Dates
     with c1:
-        st.markdown("**1. When are you traveling**")
+        st.markdown("**1. When are you traveling?**")
         today = datetime.today()
         date_range = st.date_input(
             "Trip Dates",
             value=(today, today + timedelta(days=7)),
             min_value=today,
-            label_visibility="collapsed" # Hides the label to look cleaner
+            label_visibility="collapsed" 
         )
 
     # Bucket 2: City
     with c2:
-        st.markdown("**2. In which city**")
+        st.markdown("**2. To which city?**")
         selected_city = st.selectbox(
             "Destination",
-            options=list(city_db.keys()),
-            index=0, # Defaults to first city
+            options=sorted_cities,
+            index=0, 
             label_visibility="collapsed"
         )
 
     # Bucket 3: Airline (Dynamic)
     with c3:
-        st.markdown("**3.With which airline**")
+        st.markdown("**3. With which Airline?**")
         # Get airlines available for the selected city
         available_codes = city_db[selected_city]
         
