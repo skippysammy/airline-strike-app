@@ -56,7 +56,6 @@ name_to_code = {data['name']: code for code, data in db.items()}
 code_to_name = {code: data['name'] for code, data in db.items()}
 
 # EXPANDED City/Hub Database
-# Covers major hubs for AC, WS, TS, UA, DL, AA, WN, AS, B6, NK
 city_db = {
     "Toronto (YYZ)": ["AC", "WS", "TS", "UA", "DL", "AA"],
     "Vancouver (YVR)": ["AC", "WS", "UA", "DL", "AA", "AS"],
@@ -133,8 +132,9 @@ def get_airline_risk(code, start_date, end_date, db):
 
 # --- 4. LAYOUT & SEARCH BAR ---
 
-# Top Left Logo - Adjusted ratio to bring text closer to logo
-col_logo, col_title = st.columns([0.6, 10], vertical_alignment="center")
+# LOGO FIX: Changed ratio from [0.6, 10] to [1, 12]
+# This prevents the logo from being chopped while keeping text close.
+col_logo, col_title = st.columns([1, 12], vertical_alignment="center")
 
 with col_logo:
     try:
@@ -147,7 +147,6 @@ with col_title:
 st.write("") # Spacer
 
 # THE SEARCH BUCKETS (3 Columns)
-# We use a container to visually group them
 with st.container():
     c1, c2, c3 = st.columns(3)
     
@@ -222,7 +221,6 @@ if search_clicked:
     if risk_color in ["RED", "YELLOW"]:
         st.markdown("### 💡 Recommendation")
         
-        # The Warning Message you requested
         st.info(f"**Notice:** Our algorithm indicates a probability that **{selected_airline_name}** may encounter labor disputes during your trip. To be safe, consider the alternatives below or purchase travel insurance.")
         
         # Find Safe Alternatives for THIS City
