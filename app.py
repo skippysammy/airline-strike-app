@@ -134,7 +134,7 @@ def get_airline_risk(code, start_date, end_date, db):
 
 # LOGO FIX: Changed ratio from [0.6, 10] to [1, 12]
 # This prevents the logo from being chopped while keeping text close.
-col_logo, col_title = st.columns([1, 12], vertical_alignment="center")
+col_logo, col_title = st.columns([1, 20], vertical_alignment="center")
 
 with col_logo:
     try:
@@ -245,4 +245,5 @@ if search_clicked:
             for alt in safe_alternatives:
                 st.success(f"✅ **{alt}** is currently marked Safe/Green.")
         else:
+
             st.write("No 'Green' alternatives found for this route. Check travel insurance policies.")
