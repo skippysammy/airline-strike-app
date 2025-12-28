@@ -138,7 +138,7 @@ col_logo, col_title = st.columns([1, 12], vertical_alignment="center")
 
 with col_logo:
     try:
-        st.image("logo_image.png", width=330) 
+        st.image("logo_image.png", width=250) 
     except:
         st.write("✈️") 
 with col_title:
@@ -247,6 +247,7 @@ if search_clicked:
         else:
 
             st.write("No 'Green' alternatives found for this route. Check travel insurance policies.")
+
 
 
 
